@@ -16,7 +16,10 @@ meetup_blueprint = make_meetup_blueprint(
     secret = app.config.get("MEETUP_OAUTH2_SECRET")
 )
 
+
+import podium.database
+
 app.register_blueprint(meetup_blueprint, url_prefix="/login")
 
 import podium.views
-import podium.database
+

@@ -1,7 +1,7 @@
-from podium import app
-from flask_dance.consumer.backend.sqla import OAuthConsumerMixin
-from flask_login import UserMixin
+from podium import app, meetup_blueprint
+from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
 from flask_sqlalchemy import SQLAlchemy
+
 
 
 db = SQLAlchemy(app)
@@ -32,6 +32,8 @@ class OAuth(db.Model, OAuthConsumerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
+meetup_blueprint.backend = SQLAlchemyBackend(OAuth, db.session)
+
 class Event(db.Model):
     """
     Refers to a Meetup.com Event.
@@ -55,3 +57,7 @@ class Presentation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User,
                             backref=db.backref('presentations', lazy='dynamic'))
+    event_id = db.Column(db.Integer, db.ForeignKey(Event.id))
+    event = db.relationship(Event,
+                            backref=db.backref('presentations', lazy='dynamic'))
+    title = db.Column(db.String)
