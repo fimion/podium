@@ -7,32 +7,19 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+class User(db.Model, OAuthConsumerMixin):
     """
     Our User model.
     """
 
-    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(24))
     name = db.Column(db.String(60))
     github_name = db.Column(db.String(60))
 
-    def __init__(self, email):
-        self.email = email
-
-    def __repr__(self):
-        return "#{}: {} - {}".format(self.id, self.name, self.email)
 
 
-class OAuth(db.Model, OAuthConsumerMixin):
-    """
-    For handling OAuth Tokens
-    """
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    user = db.relationship(User)
 
-meetup_blueprint.backend = SQLAlchemyBackend(OAuth, db.session)
+meetup_blueprint.backend = SQLAlchemyBackend(User, db.session)
 
 class Event(db.Model):
     """
