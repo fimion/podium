@@ -3,6 +3,12 @@
 from podium import app
 from flask import render_template
 from flask_dance.contrib.meetup import meetup
+from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
+
+
+@app.errorhandler(TokenExpiredError)
+def handle_TokenExpired(e):
+    return redirect(url_for('login/meetup'))
 
 
 @app.context_processor

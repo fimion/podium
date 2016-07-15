@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for
 from werkzeug.contrib.fixers import ProxyFix
 from flask_dance.contrib.meetup import make_meetup_blueprint
+from flask_sslify import SSLify
 
 # Make our App
 app = Flask(__name__)
@@ -9,6 +10,9 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 # Pull in our config
 app.config.from_object('podium.config')
+
+# force SSL for security.
+sslify = SSLify(app)
 
 # Make our meetup blueprint
 meetup_blueprint = make_meetup_blueprint(
