@@ -1,25 +1,28 @@
 from podium import app, meetup_blueprint
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
 from flask_sqlalchemy import SQLAlchemy
-
-
+from flask_login import current_user
 
 db = SQLAlchemy(app)
 
 
-class User(db.Model, OAuthConsumerMixin):
+class User(db.Model):
     """
-    Our User model.
+    This is our user model. maybe this should be profile?
     """
-
-    email = db.Column(db.String(120), unique=True)
-    name = db.Column(db.String(60))
-    github_name = db.Column(db.String(60))
+    id = db.Column(db.Integer, primary_key=True)
 
 
+class Oauth(db.Model, OAuthConsumerMixin):
+    """
+    This model handles our Oauth2 Logins
+    """
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User)
 
 
-meetup_blueprint.backend = SQLAlchemyBackend(User, db.session)
+meetup_blueprint.backend = SQLAlchemyBackend(Oauth, db.session, user=current_user)
+
 
 class Event(db.Model):
     """
@@ -43,7 +46,7 @@ class Presentation(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User,
-                            backref=db.backref('presentations', lazy='dynamic'))
+                           backref=db.backref('presentations', lazy='dynamic'))
     event_id = db.Column(db.Integer, db.ForeignKey(Event.id))
     event = db.relationship(Event,
                             backref=db.backref('presentations', lazy='dynamic'))
