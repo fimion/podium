@@ -34,9 +34,6 @@ class Oauth(db.Model, OAuthConsumerMixin):
         self.provider = provider
         self.created_at = created_at
         self.token = token
-        resp = meetup.get('members/self')
-        assert resp.ok, app.log_exception("In Database.py: " + str(resp))
-        self.user_id = resp.json()['id']
 
 
 meetup_blueprint.backend = SQLAlchemyBackend(Oauth, db.session, user=current_user)
