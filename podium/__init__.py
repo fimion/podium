@@ -26,7 +26,7 @@ login_manager.init_app(app)
 import podium.database
 
 
-@login_manager.user_loader()
+@login_manager.user_loader
 def load_user(user_id):
     return podium.database.User.get(user_id)
 
