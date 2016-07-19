@@ -22,8 +22,8 @@ class Oauth(db.Model, OAuthConsumerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey(User.meetup_id))
     user = db.relationship(User)
 
-    def __init__(self):
-        super()
+    def __init__(self, *kwargs):
+        super(OAuthConsumerMixin, self).__init__()
         resp = meetup.get('members/self')
         assert resp.ok
         self.user_id = resp.json()['id']
