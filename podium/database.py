@@ -1,24 +1,31 @@
 from podium import app, meetup_blueprint
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
+from flask_dance.contrib.meetup import meetup
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import current_user
+from flask_login import current_user, UserMixin
 
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     """
     This is our user model. maybe this should be profile?
     """
     id = db.Column(db.Integer, primary_key=True)
+    meetup_id = db.Column(db.Integer, unique=True)
 
 
 class Oauth(db.Model, OAuthConsumerMixin):
     """
     This model handles our Oauth2 Logins
     """
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.meetup_id))
     user = db.relationship(User)
+
+    def __init__(self):
+        resp = meetup.get('members/self')
+        assert resp.ok
+        self.user_id = resp.json()['id']
 
 
 meetup_blueprint.backend = SQLAlchemyBackend(Oauth, db.session, user=current_user)

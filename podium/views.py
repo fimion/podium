@@ -1,13 +1,13 @@
 # Put all Flask views in here, as suggested by:
 # http://flask.pocoo.org/docs/0.11/patterns/packages/
 from podium import app
-from flask import render_template
+from flask import render_template, redirect, url_for
 from flask_dance.contrib.meetup import meetup
 from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
 
 
 @app.errorhandler(TokenExpiredError)
-def handle_TokenExpired(e):
+def handle_tokenexpired(e):
     return redirect(url_for('login/meetup'))
 
 
@@ -26,6 +26,7 @@ def inject_meetup_user():
         meetup_user = resp.json()
 
     return dict(meetup_user=meetup_user)
+
 
 @app.route('/')
 def index():
