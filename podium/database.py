@@ -2,7 +2,10 @@ from podium import app, meetup_blueprint
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
 from flask_dance.contrib.meetup import meetup
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy_utils import JSONType
 from flask_login import current_user, UserMixin
+from datetime import datetime
 
 db = SQLAlchemy(app)
 
@@ -19,6 +22,10 @@ class Oauth(db.Model, OAuthConsumerMixin):
     """
     This model handles our Oauth2 Logins
     """
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    token = db.Column(MutableDict.as_mutable(JSONType))
     user_id = db.Column(db.Integer, db.ForeignKey(User.meetup_id))
     user = db.relationship(User)
 
