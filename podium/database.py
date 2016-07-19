@@ -29,10 +29,9 @@ class Oauth(db.Model, OAuthConsumerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey(User.meetup_id))
     user = db.relationship(User)
 
-    def __init__(self, provider="", created_at="", token=""):
+    def __init__(self, provider="", token=""):
 
         self.provider = provider
-        self.created_at = created_at
         self.token = token
 
 
