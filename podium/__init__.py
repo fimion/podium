@@ -21,14 +21,12 @@ meetup_blueprint = make_meetup_blueprint(
 )
 
 login_manager = LoginManager()
-login_manager.init_app(app)
+
 
 import podium.database
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return podium.database.User.get(user_id)
+login_manager.init_app(app)
 
 app.register_blueprint(meetup_blueprint, url_prefix="/login")
 

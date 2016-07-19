@@ -1,4 +1,4 @@
-from podium import app, meetup_blueprint
+from podium import app, meetup_blueprint, login_manager
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
 from flask_dance.contrib.meetup import meetup
 from flask_sqlalchemy import SQLAlchemy
@@ -18,10 +18,18 @@ class User(db.Model, UserMixin):
     meetup_id = db.Column(db.Integer, unique=True)
 
 
+@login_manager.user_loader
+def user_loader(meetup_id):
+    cur_user = User.query.filter_by(meetup_id=meetup_id).first()
+    if cur_user:
+        pass
+
+
 class Oauth(db.Model, OAuthConsumerMixin):
     """
-    This model handles our Oauth2 Logins
+        This model handles our Oauth2 Logins
     """
+
     id = db.Column(db.Integer, primary_key=True)
     provider = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
