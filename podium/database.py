@@ -35,7 +35,7 @@ class Oauth(db.Model, OAuthConsumerMixin):
         self.created_at = created_at
         self.token = token
         resp = meetup.get('members/self')
-        assert resp.ok
+        assert resp.ok, app.log_exception(resp.json())
         self.user_id = resp.json()['id']
 
 
