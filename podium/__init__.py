@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for
 from werkzeug.contrib.fixers import ProxyFix
 from flask_dance.contrib.meetup import make_meetup_blueprint
 from flask_sslify import SSLify
-
+from flask_login import LoginManager
 # Make our App
 app = Flask(__name__)
 #Do the proxy fix for heroku and oauth
@@ -16,12 +16,19 @@ sslify = SSLify(app)
 
 # Make our meetup blueprint
 meetup_blueprint = make_meetup_blueprint(
-    key = app.config.get("MEETUP_OAUTH2_KEY"),
-    secret = app.config.get("MEETUP_OAUTH2_SECRET")
+    key=app.config.get("MEETUP_OAUTH2_KEY"),
+    secret=app.config.get("MEETUP_OAUTH2_SECRET")
 )
 
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 import podium.database
+
+
+@login_manager.user_loader()
+def load_user(user_id):
+    return podium.database.User.get(user_id)
 
 app.register_blueprint(meetup_blueprint, url_prefix="/login")
 
