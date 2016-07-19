@@ -20,10 +20,13 @@ def inject_meetup_user():
     :return:
     """
     meetup_user = None
+    cur_user = current_user()
     if meetup.authorized:
         resp = meetup.get("member/self")
         assert resp.ok
         meetup_user = resp.json()
+        if cur_user.meetup_id != meetup_user['id']:
+            return redirect(url_for('login/register'))
 
     return dict(meetup_user=meetup_user)
 
